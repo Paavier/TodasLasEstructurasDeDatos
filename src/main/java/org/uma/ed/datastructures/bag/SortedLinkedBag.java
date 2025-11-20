@@ -1,5 +1,7 @@
 package org.uma.ed.datastructures.bag ;
 
+import org.uma.ed.datastructures.set.SortedLinkedSet;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -437,9 +439,20 @@ public class SortedLinkedBag<T> extends AbstractSortedBag<T> implements SortedBa
     return currentNode;
   }
 
-
+  //TODO: revisar si esto se hace así.
   public void intersection(Bag<T> bag) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    SortedLinkedSet<T> elements = SortedLinkedSet.empty(this.comparator);
+    for(T x : this){
+      elements.insert(x);
+    }
+    for(T x : elements){
+      int thisOccurrences = this.occurrences(x);
+      int bagOccurrences = bag.occurrences(x);
+      int occurrences = thisOccurrences - Math.min(thisOccurrences, bagOccurrences);
+      for(int i = 0; i < occurrences; i++){
+        this.delete(x);
+      }
+    }
   }
 
   public void intersection(SortedLinkedBag<T> that) {
@@ -467,7 +480,13 @@ public class SortedLinkedBag<T> extends AbstractSortedBag<T> implements SortedBa
   }
 
   public void difference(Bag<T> bag) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    for(T x: bag){
+      if(this.contains(x)){
+        for (int i = 0; i < this.occurrences(x); i++) {
+          this.delete(x);
+        }
+      }
+    }
   }
 
   // We use that argument iterates in order
