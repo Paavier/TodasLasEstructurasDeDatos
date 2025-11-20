@@ -86,7 +86,14 @@ public class BST<K> implements SearchTree<K> {
    * @return a new BST with same elements and structure as {@code that}.
    */
   public static <K> BST<K> copyOf(SearchTree<K> that) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(that == null){
+      return null;
+    }
+    BST<K> copy = BST.empty(that.comparator());
+    for(K element : that.inOrder()){
+      copy.insert(element);
+    }
+    return copy;
   }
 
   /**
@@ -98,11 +105,22 @@ public class BST<K> implements SearchTree<K> {
    * @return a new BST with same elements and structure as {@code that}.
    */
   public static <K> BST<K> copyOf(BST<K> that) {
+    if(that == null){
+      return null;
+    }
     return new BST<>(that.comparator, copyOf(that.root), that.size);
   }
 
   private static <K> Node<K> copyOf(Node<K> node) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(node == null){
+      return null;
+    }
+
+    Node<K> newNode = new Node<>(node.key);
+    newNode.left = copyOf(node.left);
+    newNode.right = copyOf(node.right);
+
+    return newNode;
   }
 
   /**
@@ -111,7 +129,8 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public void clear() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    this.root = null;
+    this.size = 0;
   }
 
   /**
@@ -120,7 +139,7 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public Comparator<K> comparator() {
-    return comparator;
+    return this.comparator;
   }
 
   /**
@@ -129,7 +148,7 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public boolean isEmpty() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    return this.root == null;
   }
 
   /**
@@ -138,7 +157,7 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public int size() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    return this.size;
   }
 
   /**
@@ -165,7 +184,21 @@ public class BST<K> implements SearchTree<K> {
 
   // returns modified tree
   private Node<K> insert(Node<K> node, K key) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(node == null){
+      node = new Node<>(key);
+      this.size++;
+      return node;
+    }
+
+    int cmp = comparator.compare(key, node.key);
+    if(cmp < 0){
+      node.left = insert(node.left, key);
+    }else if(cmp > 0){
+      node.right = insert(node.right, key);
+    }else{
+      node.key = key;
+    }
+    return node;
   }
 
   /**
@@ -178,7 +211,18 @@ public class BST<K> implements SearchTree<K> {
   }
 
   private K search(Node<K> node, K key) {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(node == null){
+      return null;
+    }
+
+    int cmp = comparator.compare(key, node.key);
+    if(cmp < 0){
+      return search(node.left,key);
+    }else if(cmp > 0){
+      return search(node.right, key);
+    }else{
+      return node.key;
+    }
   }
 
   /**
@@ -201,9 +245,7 @@ public class BST<K> implements SearchTree<K> {
 
   // returns modified tree
   private Node<K> delete(Node<K> node, K key) {
-    if (node == null) {
-      // key not found; do nothing
-    } else {
+    if(node != null){
       int cmp = comparator.compare(key, node.key);
       if (cmp < 0) {
         node.left = delete(node.left, key);
@@ -251,7 +293,17 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public K minimum() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(isEmpty()){
+      throw new EmptySearchTreeException("minimum on empty search tree");
+    }
+    return minimum(this.root);
+  }
+
+  private K minimum(Node<K> node){
+    if(node.left == null){
+      return node.key;
+    }
+    return minimum(node.left);
   }
 
   /**
@@ -260,7 +312,17 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public K maximum() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(isEmpty()) {
+      throw new EmptySearchTreeException("maximum on empty search tree");
+    }
+    return maximum(this.root);
+  }
+
+  private K maximum(Node<K> node){
+    if(node.right == null){
+      return node.key;
+    }
+    return maximum(node.right);
   }
 
   /**
@@ -269,7 +331,19 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public void deleteMinimum() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(isEmpty()){
+      throw new EmptySearchTreeException("deleteMinimum on empty search tree");
+    }
+    root = deleteMinimum(root);
+  }
+
+  private Node<K> deleteMinimum(Node<K> node){
+    if(node.left == null){
+      this.size--;
+      return node.right;
+    }
+    node.left = deleteMinimum(node.left);
+    return node;
   }
 
   /**
@@ -278,7 +352,19 @@ public class BST<K> implements SearchTree<K> {
    */
   @Override
   public void deleteMaximum() {
-    throw new UnsupportedOperationException("Not implemented yet");
+    if(isEmpty()){
+      throw new EmptySearchTreeException("deleteMaximum on empty search tree");
+    }
+    root = deleteMaximum(root);
+  }
+
+  private Node<K> deleteMaximum(Node<K> node){
+    if(node.right == null){
+      this.size--;
+      return node.left;
+    }
+    node.right = deleteMaximum(node.right);
+    return node;
   }
 
   /**

@@ -212,6 +212,9 @@ public class MaxiphobicHeap<T> implements Heap<T> {
    */
   @Override
   public int size() {
+    if(this.root == null){
+      return 0;
+    }
     return this.root.weight;
   }
 
